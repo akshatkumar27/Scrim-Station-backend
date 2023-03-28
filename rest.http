@@ -1,0 +1,13 @@
+GET http://localhost:3000/products
+
+###
+
+POST  http://localhost:3000/test
+
+Content-Type:application/json
+
+{
+    "Scrim_name":"Fireham",
+   "Scrim_details":"destauilkjhgfghjkl;",
+   "time":"10"
+}

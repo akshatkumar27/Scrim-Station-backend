@@ -1,8 +1,13 @@
 const express = require('express');
 const mongoose= require('mongoose');
+const bodyParser = require('body-parser');
 
 const app = express();
+
 app.use(express.json()); 
+
+app.use(bodyParser.json());
+
 
 const uri='mongodb+srv://master:vTfyPe1VvfMeAIxu@cluster0.aqhpoqp.mongodb.net/'
 mongoose.set('strictQuery', false);
@@ -20,7 +25,7 @@ mongoose.connect(uri,
 
 const productRoutes=require('./api/routes/srims');
 
-const registerRoutes=require('./api/routes/')
+const registerRoutes=require('./api/routes/register')
 // app.all('/test',(req,res)=>{
 //     console.log(req.body);
 //     console.log("req.body");
@@ -28,6 +33,7 @@ const registerRoutes=require('./api/routes/')
 // }) 
 
 app.use('/products',productRoutes)
+app.use('/api/user',registerRoutes)
 
 app.use((req,res,next)=>{
  const err=new Error("Not Found")

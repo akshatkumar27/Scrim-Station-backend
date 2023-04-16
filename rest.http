@@ -11,3 +11,14 @@ Content-Type:application/json
    "Scrim_details":"destauilkjhgfghjkl;",
    "time":"10"
 }
+###
+
+POST  http://localhost:3000/api/user/
+
+Content-Type:application/json
+
+{
+    "Username":"Fireham",
+   "Email":"a@gmail.com",
+   "Password":"10as"
+}

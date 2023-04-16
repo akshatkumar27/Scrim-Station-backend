@@ -7,17 +7,17 @@ const RegisterSchema=new Schema({
        required:true
     },
 
-    Email:{
+    Email:{ 
        type:String,
        required:true
     },
-    
+
     Password:{
         type:String,
         required:true
     },
        
 })
-const Product= mongoose.model('scrim',ProductSchema);
+const Register= mongoose.model('Register',RegisterSchema);
 
-module.exports=Product;
+module.exports=Register;

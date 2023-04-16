@@ -1,80 +1,81 @@
-const express=require("express");
-
+const express = require("express");
+const bcrypt = require('bcrypt');
 const route= express.Router();
+const jwt= require("jsonwebtoken")
+const Register=require('../../models/Register.model');
 
-const RegisterSchema=require('../../models/Register.model');
 
-route.get('/register',async(req,res,next)=>{
+route.post('/register', async (req, res) => {
 
-    
-    try{
-          const result=await Product.find()
-          res.send(result); 
-    } catch(err){
-        console.log(err.message)
+  try { 
+    const username = req.body.Username;
+    const email=req.body.Email;
+    // Check if user already exists
+    const user = await Register.findOne({"Email":email});
+    if (user) {
+      return res.status(400).json({ message: 'User already exists' });
     }
-});
-
-route.post('/',async(req,res,next)=>{
-    console.log(req.body);
-
-    // one way of adding req data into data base 
-
-    // const product=new Product({
-    //     Scrim_name:req.body.Scrim_name,
-    //     Scrim_details:req.body.Scrim_details,
-    //     time:req.body.time,
-    // })
-    // product.save()
-    // .then(res=>{
-    //     console.log(res);
-    //     res.send(res);
-    // })
-    // .catch(err=>{
-    //     console.log(err.message);
-    // })
-
-// 2nd way of adding data 
-
-try{
-    const product=new Product(req.body)
-     const result=await product.save();
-      res.send(result);
-    }
-catch(err){
-    console.log(err.message);
-}
-
-
     
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.Password, salt);
+    console.log(username,email,req.body.Password,hashedPassword);
+
+    // Create new user
+    const newUser = new Register({
+      Username: req.body.Username,
+      Email: email,
+      Password: hashedPassword
+    });
+
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error(error); 
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
-route.get('/:productId',async(req,res,next)=>{
-    const id=req.params.productId;
-    if(id==='specials') 
-    {
-        res.status(200).json({  
-            message:"special product id ",
-            id:id
-        })
-       
-    }
-    else {
-        // res.status(200).json({
-        //     message:"Product id",
-        //     id:id, 
-        // }) 
+route.post('/login', async (req, res) => {
 
-        try{
-            // const product=await Product.findById(id);
-            const product=await Product.findOne({_id:id});
-  res.send(product)
+  try { 
+   
+    const email=req.body.Email;
+    const password=req.body.Password;
+    // Check if user already exists
+    const user = await Register.findOne({"Email":email});
+    if (user) {
+      bcrypt.compare(password,user.Password,function(err,result){
+        if(err){
+          res.json({
+            error:err
+          })
         }
-        catch(err){
-console.log(err)
+        if(result){
+          let token= jwt.sign({name:user.Username},'verySecreatValue')
+          res.json({
+            message:"Logged in successfully",
+            token,
+          })
         }
+      })
+     }
+    else{
+      res.json({
+        message:"Password Invalid",
+        status:400
+      })
     }
-}); 
+     console.log(email,req.body.Password);
+
+  } catch (error) {
+    console.error(error); 
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 
 module.exports=route;

@@ -46,15 +46,18 @@ route.post('/login', async (req, res) => {
     // Check if user already exists
     const user = await Register.findOne({"Email":email});
     if (user) {
-      bcrypt.compare(password,user.Password,function(err,result){
-        if(err){
-          res.json({
-            error:err
+      bcrypt.compare(password,user.Password,(err,result)=>{
+        console.log(email,req.body.Password,err);
+        if(!result){
+          res.json({ 
+            message:"Invalid Password"
           })
         }
-        if(result){
+        else if(result){
           let token= jwt.sign({name:user.Username},'verySecreatValue')
           res.json({
+            status:"true",
+            code:200,
             message:"Logged in successfully",
             token,
           })
@@ -63,11 +66,10 @@ route.post('/login', async (req, res) => {
      }
     else{
       res.json({
-        message:"Password Invalid",
+        message:"User not found",
         status:400
       })
     }
-     console.log(email,req.body.Password);
 
   } catch (error) {
     console.error(error); 

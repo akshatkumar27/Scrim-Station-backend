@@ -1,0 +1,14 @@
+services:
+  - name: Scrimbackend
+    buildCommand: npm install
+    startCommand: node server.js
+    env:
+      NODE_ENV: production
+    envVars:
+      MONGO_URI: mongodb+srv://master:vTfyPe1VvfMeAIxu@cluster0.aqhpoqp.mongodb.net/
+    ports:
+      - 3000
+    healthCheckPath: /
+    disk:
+      mount: true
+      size: 10

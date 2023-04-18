@@ -1,5 +1,6 @@
 services:
-  - name: Scrimbackend
+  - type: docker 
+    name: Scrimbackend
     buildCommand: npm install
     startCommand: node server.js
     env:
